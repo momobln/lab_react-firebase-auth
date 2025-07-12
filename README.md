@@ -1,4 +1,5 @@
 # lab_react-firebase-auth
+
 ![logo_ironhack_blue 7](https://user-images.githubusercontent.com/23629340/40541063-a07a0a8a-601a-11e8-91b5-2f13e4e6b441.png)
 
 # LAB | React Firebase - Protected Routes & Data
@@ -66,9 +67,9 @@ Before writing any code, you need to set up your Firebase project and your local
 
 2.  **React Project**:
 
-    - Create a new React + TypeScript project using Vite:
+    - Create a new React project using Vite:
       ```bash
-      npm create vite@latest community-wall -- --template react-ts
+      npm create vite@latest community-wall -- --template react
       ```
     - Navigate into the new directory:
       ```bash
@@ -94,18 +95,13 @@ Before writing any code, you need to set up your Firebase project and your local
 
 First, let's connect our app to Firebase and create a simple component to handle logging in and out.
 
-1.  **Create the Firebase config file** in `src/config/firebase.ts`. This file will initialize Firebase and export the services we need.
+1.  **Create the Firebase config file** in `src/config/firebase.js`. This file will initialize Firebase and export the services we need.
 
-    ```typescript
-    // src/config/firebase.ts
-    import { initializeApp } from "firebase/app";
-    import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signOut,
-    } from "firebase/auth";
-    import { getDatabase } from "firebase/database";
+    ```javascript
+    // src/config/firebase.js
+    import { initializeApp } from 'firebase/app';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+    import { getDatabase } from 'firebase/database';
 
     const firebaseConfig = {
       apiKey: import.meta.env.VITE_API_KEY,
@@ -114,7 +110,7 @@ First, let's connect our app to Firebase and create a simple component to handle
       projectId: import.meta.env.VITE_PROJECT_ID,
       storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
       messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-      appId: import.meta.env.VITE_APP_ID,
+      appId: import.meta.env.VITE_APP_ID
     };
 
     const app = initializeApp(firebaseConfig);
@@ -140,21 +136,21 @@ First, let's connect our app to Firebase and create a simple component to handle
     };
     ```
 
-2.  **Create an `Auth.tsx` component** in `src/components/Auth.tsx`. This will display the user's status and provide login/logout buttons.
+2.  **Create an `Auth.jsx` component** in `src/components/Auth.jsx`. This will display the user's status and provide login/logout buttons.
 
     > [!TIP]
     > Use the `useAuthState` hook from `react-firebase-hooks/auth`. It's the cleanest way to get the current user, loading state, and any errors.
 
-3.  **Update `App.tsx`** to display the `Auth` component. For now, just put it in a simple layout.
+3.  **Update `App.jsx`** to display the `Auth` component. For now, just put it in a simple layout.
 
 <details>
 <summary>⭐ **Click for Iteration 1 Solution** ⭐</summary>
 
-**`src/components/Auth.tsx`**
+**`src/components/Auth.jsx`**
 
-```tsx
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, signInWithGoogle, signOutUser } from "../config/firebase";
+```jsx
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth, signInWithGoogle, signOutUser } from '../config/firebase';
 
 const Auth = () => {
   const [user, loading] = useAuthState(auth);
@@ -180,11 +176,11 @@ const Auth = () => {
 export default Auth;
 ```
 
-**`src/App.tsx`**
+**`src/App.jsx`**
 
-```tsx
-import Auth from "./components/Auth";
-import "./App.css";
+```jsx
+import Auth from './components/Auth';
+import './App.css';
 
 function App() {
   return (
@@ -211,18 +207,18 @@ Most apps have pages that should only be visible to logged-in users. Let's creat
 
 1.  **Create page components**:
 
-    - `src/pages/HomePage.tsx`: A simple welcome page.
-    - `src/pages/DashboardPage.tsx`: A placeholder page for authenticated users.
-    - `src/pages/LoginPage.tsx`: A page that tells the user they need to log in. It can reuse the `Auth` component.
+    - `src/pages/HomePage.jsx`: A simple welcome page.
+    - `src/pages/DashboardPage.jsx`: A placeholder page for authenticated users.
+    - `src/pages/LoginPage.jsx`: A page that tells the user they need to log in. It can reuse the `Auth` component.
 
-2.  **Create a `ProtectedRoute.tsx` component** in `src/components/ProtectedRoute.tsx`. This component is the key to protecting routes.
+2.  **Create a `ProtectedRoute.jsx` component** in `src/components/ProtectedRoute.jsx`. This component is the key to protecting routes.
 
     - It should use the `useAuthState` hook.
     - If `loading`, it can show a loading message.
     - If there's **no user**, it should redirect to the `/login` page using the `Navigate` component from `react-router-dom`.
     - If there **is a user**, it should render its `children`.
 
-3.  **Set up the router**. Modify `App.tsx` (or `main.tsx`) to use `react-router-dom` to define your routes.
+3.  **Set up the router**. Modify `App.jsx` (or `main.jsx`) to use `react-router-dom` to define your routes.
     - The `/` route should show `HomePage`.
     - The `/login` route should show `LoginPage`.
     - The `/dashboard` route should be wrapped by your `ProtectedRoute` component.
@@ -230,18 +226,14 @@ Most apps have pages that should only be visible to logged-in users. Let's creat
 <details>
 <summary>⭐ **Click for Iteration 2 Solution** ⭐</summary>
 
-**`src/components/ProtectedRoute.tsx`**
+**`src/components/ProtectedRoute.jsx`**
 
-```tsx
-import { useAuthState } from "react-firebase-hooks/auth";
-import { Navigate } from "react-router-dom";
-import { auth } from "../config/firebase";
+```jsx
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Navigate } from 'react-router-dom';
+import { auth } from '../config/firebase';
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children }) => {
   const [user, loading] = useAuthState(auth);
 
   if (loading) {
@@ -258,10 +250,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 export default ProtectedRoute;
 ```
 
-**`src/pages/LoginPage.tsx`**
+**`src/pages/LoginPage.jsx`**
 
-```tsx
-import Auth from "../components/Auth";
+```jsx
+import Auth from '../components/Auth';
 
 const LoginPage = () => {
   return (
@@ -276,16 +268,16 @@ const LoginPage = () => {
 export default LoginPage;
 ```
 
-**`src/App.tsx` (Router Setup)**
+**`src/App.jsx` (Router Setup)**
 
-```tsx
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/DashboardPage";
-import LoginPage from "./pages/LoginPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Auth from "./components/Auth";
-import "./App.css";
+```jsx
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import DashboardPage from './pages/DashboardPage';
+import LoginPage from './pages/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import Auth from './components/Auth';
+import './App.css';
 
 function App() {
   return (
@@ -349,49 +341,42 @@ Now for the main feature: posting messages to the wall. This involves creating, 
     > [!CAUTION]
     > Security rules are critical. The rules above ensure data integrity. The first `.validate` ensures new posts are created correctly, and the second one checks ownership before allowing a delete (`newData.val() === null`).
 
-2.  **Create a custom hook `usePosts.ts`** in `src/hooks/`. This hook will encapsulate all the logic for interacting with the `posts` collection in your database. It should handle:
+2.  **Create a custom hook `usePosts.js`** in `src/hooks/`. This hook will encapsulate all the logic for interacting with the `posts` collection in your database. It should handle:
 
     - Fetching all posts in real-time.
     - Adding a new post (tagged with the user's `uid`).
     - Deleting a post.
 
-3.  **Create a `PostList.tsx` component** in `src/components/`. This component will:
+3.  **Create a `PostList.jsx` component** in `src/components/`. This component will:
 
     - Use your `usePosts` hook to get the data and functions.
     - Display a form for adding a new post (only show this if the user is logged in).
     - Map over the posts and display them.
     - For each post, show a "Delete" button **only if the current user is the author of the post**.
 
-4.  **Integrate `PostList.tsx`** into your `HomePage.tsx` or `DashboardPage.tsx` so users can see and interact with the wall.
+4.  **Integrate `PostList.jsx`** into your `HomePage.jsx` or `DashboardPage.jsx` so users can see and interact with the wall.
 
 <details>
 <summary>⭐ **Click for Iteration 3 Solution** ⭐</summary>
 
-**`src/hooks/usePosts.ts`**
+**`src/hooks/usePosts.js`**
 
-```ts
-import { useState, useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { ref, onValue, push, remove, set } from "firebase/database";
-import { auth, db } from "../config/firebase";
-
-export interface Post {
-  id: string;
-  text: string;
-  uid: string;
-  author?: string; // Optional: to display name
-}
+```javascript
+import { useState, useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { ref, onValue, push, remove, set } from 'firebase/database';
+import { auth, db } from '../config/firebase';
 
 export const usePosts = () => {
   const [user] = useAuthState(auth);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const postsRef = ref(db, "posts");
-    const unsubscribe = onValue(postsRef, (snapshot) => {
+    const postsRef = ref(db, 'posts');
+    const unsubscribe = onValue(postsRef, snapshot => {
       const data = snapshot.val();
-      const postList: Post[] = [];
+      const postList = [];
       if (data) {
         for (const id in data) {
           postList.push({ id, ...data[id] });
@@ -404,28 +389,28 @@ export const usePosts = () => {
     return () => unsubscribe();
   }, []);
 
-  const addPost = async (text: string) => {
-    if (!user) throw new Error("Not authenticated");
+  const addPost = async (text) => {
+    if (!user) throw new Error('Not authenticated');
     try {
-      const postsRef = ref(db, "posts");
+      const postsRef = ref(db, 'posts');
       const newPostRef = push(postsRef);
       await set(newPostRef, {
         text,
         uid: user.uid,
-        author: user.displayName,
+        author: user.displayName
       });
     } catch (error) {
-      console.error("Error adding post:", error);
+      console.error('Error adding post:', error);
     }
   };
 
-  const deletePost = async (postId: string) => {
-    if (!user) throw new Error("Not authenticated");
+  const deletePost = async (postId) => {
+    if (!user) throw new Error('Not authenticated');
     try {
       const postRef = ref(db, `posts/${postId}`);
       await remove(postRef);
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -433,21 +418,21 @@ export const usePosts = () => {
 };
 ```
 
-**`src/components/PostList.tsx`**
+**`src/components/PostList.jsx`**
 
-```tsx
-import { useState } from "react";
-import { usePosts } from "../hooks/usePosts";
+```jsx
+import { useState } from 'react';
+import { usePosts } from '../hooks/usePosts';
 
 const PostList = () => {
   const { posts, loading, addPost, deletePost, user } = usePosts();
-  const [newPostText, setNewPostText] = useState("");
+  const [newPostText, setNewPostText] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (newPostText.trim()) {
       addPost(newPostText);
-      setNewPostText("");
+      setNewPostText('');
     }
   };
 
@@ -458,12 +443,7 @@ const PostList = () => {
       {user && (
         <form onSubmit={handleSubmit}>
           <h3>Create a new post</h3>
-          <textarea
-            value={newPostText}
-            onChange={(e) => setNewPostText(e.target.value)}
-            placeholder="What's on your mind?"
-            rows={3}
-          />
+          <textarea value={newPostText} onChange={e => setNewPostText(e.target.value)} placeholder="What's on your mind?" rows={3} />
           <button type="submit">Post</button>
         </form>
       )}
@@ -473,15 +453,13 @@ const PostList = () => {
         {posts.length === 0 ? (
           <p>No posts yet. Be the first!</p>
         ) : (
-          posts.map((post) => (
+          posts.map(post => (
             <div key={post.id} className="post-card">
               <p>
-                <strong>{post.author || "Anonymous"}</strong> wrote:
+                <strong>{post.author || 'Anonymous'}</strong> wrote:
               </p>
               <p>{post.text}</p>
-              {user && user.uid === post.uid && (
-                <button onClick={() => deletePost(post.id)}>Delete</button>
-              )}
+              {user && user.uid === post.uid && <button onClick={() => deletePost(post.id)}>Delete</button>}
             </div>
           ))
         )}
@@ -493,19 +471,16 @@ const PostList = () => {
 export default PostList;
 ```
 
-**`src/pages/HomePage.tsx` (Updated)**
+**`src/pages/HomePage.jsx` (Updated)**
 
-```tsx
-import PostList from "../components/PostList";
+```jsx
+import PostList from '../components/PostList';
 
 const HomePage = () => {
   return (
     <div>
       <h2>Welcome!</h2>
-      <p>
-        This is the community wall. See what others are saying and sign in to
-        join the conversation.
-      </p>
+      <p>This is the community wall. See what others are saying and sign in to join the conversation.</p>
       <hr />
       <PostList />
     </div>
